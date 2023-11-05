@@ -7,42 +7,27 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+
+import java.time.Duration;
 
 public class StepDefinitions {
     private WebDriver driver;
     private TelusTVPage telusTVPage;
 
-    @Before
+    private boolean isHeadless = false;
+
+    @Before("@headless")
     public void setup() {
         //initialization now in the first @Given clause
+        isHeadless = true;
     }
 
 
     @Given("I am on the TELUS TV+ website with {string} browser")
     public void i_am_on_the_telus_tv_website_with_browser(String browser) {
-        // Initialize the WebDriver instance based on the browser parameter
-        switch (browser) {
-            case "Chrome":
-                // Initialize ChromeDriver
-                ChromeOptions options = new ChromeOptions();
-                options.addArguments("--remote-allow-origins=*");
-                driver = new ChromeDriver(options);
-                break;
-            case "Edge":
-                // Initialize EdgeDriver
-                driver = new EdgeDriver();
-                break;
-            case "Firefox":
-                // Initialize FirefoxDriver
-                driver = new FirefoxDriver();
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported browser: " + browser);
-        }
+        // Create the WebDriver instance in headless mode based on the browser parameter
+        driver = BrowserFactory.createDriver(browser,isHeadless);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));  //(2, TimeUnit.SECONDS);
         // Navigate to the TELUS TV+ website
         telusTVPage = new TelusTVPage(driver);
         telusTVPage.openPage("https://telustvplus.com/#/");

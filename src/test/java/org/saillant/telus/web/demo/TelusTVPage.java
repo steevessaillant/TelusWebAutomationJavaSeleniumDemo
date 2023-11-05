@@ -5,12 +5,14 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
 
 public class TelusTVPage {
-    private WebDriver driver;
+    private final WebDriver driver;
 
 
     public TelusTVPage(WebDriver driver) {
@@ -26,7 +28,7 @@ public class TelusTVPage {
     }
 
     // Locator for the close button in the popup
-    private By closePopupButton = By.cssSelector(".welcome-slide-container .close-modal button");
+    private final By closePopupButton = By.cssSelector(".welcome-slide-container .close-modal button");
 
     // Method to close the popup
     public void closeWelcomePopup() {
@@ -40,8 +42,10 @@ public class TelusTVPage {
         String xpathSelector = "//a[text()='" + linkText + "']";
 
         // Find the element using the XPath selector
-        WebElement link = driver.findElement(By.xpath(xpathSelector));
-
+        //WebElement link = driver.findElement(By.xpath(xpathSelector));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+        WebElement link = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpathSelector)));
+        //element.click();
         // Click the element
         link.click();
     }
@@ -51,10 +55,6 @@ public class TelusTVPage {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].scrollIntoView();", driver.findElement(By.xpath("//span[text()='Movies']")));
         driver.findElement(By.xpath("//span[text()='Movies']")).click();
-    }
-
-    public WebElement getViewAllButton() {
-        return driver.findElement(By.xpath("//div[contains(@class, 'title')]/a/span[text()='Movies']/span[@class='title-tooltip']"));
     }
 
     public void clickFilterButton() {
